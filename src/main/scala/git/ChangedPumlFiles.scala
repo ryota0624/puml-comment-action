@@ -1,10 +1,11 @@
 package git
 
+import com.typesafe.scalalogging.LazyLogging
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.diff.DiffEntry
 import org.eclipse.jgit.diff.DiffEntry.ChangeType
 import org.eclipse.jgit.lib.Repository
-import org.eclipse.jgit.treewalk.CanonicalTreeParser
+import org.eclipse.jgit.revwalk.RevWalk
 import uml.Puml
 
 import scala.jdk.CollectionConverters._
@@ -14,7 +15,8 @@ class ChangedPumlFiles(private val values: Iterator[ChangedPumlFile]) {
   def toArray: Array[ChangedPumlFile] = values.toArray
 }
 
-object ChangedPumlFiles {
+object ChangedPumlFiles extends LazyLogging {
+
   def load(
       repository: Repository,
       from: String,
@@ -23,17 +25,14 @@ object ChangedPumlFiles {
     val fromId = repository.resolve(from)
     val toId = repository.resolve(to)
     for {
-      reader <- Try(repository.newObjectReader())
       files <- Try(new Git(repository)).map { git =>
-        val fromParser = new CanonicalTreeParser
-        fromParser.reset(reader, fromId)
+        val fromParser = prepareTreeParser(repository, fromId)
+        val toParser = prepareTreeParser(repository, toId)
 
-        val toParser = new CanonicalTreeParser
-        toParser.reset(reader, toId)
         val list = git
           .diff()
           .setNewTree(toParser)
-          .setNewTree(fromParser)
+          .setOldTree(fromParser)
           .call()
           .iterator()
           .asScala
@@ -54,5 +53,31 @@ object ChangedPumlFiles {
         new ChangedPumlFiles(list)
       }
     } yield files
+  }
+
+  import org.eclipse.jgit.lib.ObjectId
+  import org.eclipse.jgit.treewalk.CanonicalTreeParser
+
+  private def prepareTreeParser(
+      repository: Repository,
+      objectId: ObjectId
+  ): CanonicalTreeParser = {
+    // from the commit we can build the tree which allows us to construct the TreeParser
+    //noinspection Duplicates
+    try {
+      val walk = new RevWalk(repository)
+      try {
+        val commit = walk.parseCommit(objectId)
+        val tree = walk.parseTree(commit.getTree.getId)
+        val treeParser = new CanonicalTreeParser
+        try {
+          val reader = repository.newObjectReader
+          try treeParser.reset(reader, tree.getId)
+          finally if (reader != null) reader.close()
+        }
+        walk.dispose()
+        treeParser
+      } finally if (walk != null) walk.close()
+    }
   }
 }
