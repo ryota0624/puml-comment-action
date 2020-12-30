@@ -10,11 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        run: |
+          git remote update
       - name: preview uml
         uses: ./
         with:
-          from: ${{ github.base_ref }}
-          to: ${{ github.head_ref }}
+          from: origin/${{ github.base_ref }}
+          to: origin/${{ github.head_ref }}
           github-aouth: ${{ secrets.Token }}
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v1
