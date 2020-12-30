@@ -19,6 +19,7 @@ class ChangedPumlFiles(private val values: Iterator[ChangedPumlFile]) {
 object ChangedPumlFiles extends LazyLogging {
 
   def load(
+      gitDirPath: String,
       repository: Repository,
       from: String,
       to: String
@@ -42,11 +43,12 @@ object ChangedPumlFiles extends LazyLogging {
                 if Puml.isPumlFileName(diffEntry.getNewPath) =>
               diffEntry.getChangeType match {
                 case ChangeType.ADD =>
-                  ChangedPumlFile.Added(Puml.load(diffEntry.getNewPath))
+                  ChangedPumlFile
+                    .Added(Puml.load(gitDirPath + "/" + diffEntry.getNewPath))
                 case ChangeType.MODIFY =>
                   ChangedPumlFile.Modified(
-                    Puml.load(diffEntry.getOldPath),
-                    Puml.load(diffEntry.getNewPath)
+                    Puml.load(gitDirPath + "/" + diffEntry.getOldPath),
+                    Puml.load(gitDirPath + "/" + diffEntry.getNewPath)
                   )
               }
           }

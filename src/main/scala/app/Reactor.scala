@@ -16,10 +16,10 @@ class Reactor(publisher: NotificationPublisher) extends LazyLogging {
       toHash: String
   ): Try[Unit] = {
     val repository = new FileRepositoryBuilder()
-      .setGitDir(File(gitDirPath).toJava)
+      .setGitDir(File(gitDirPath + "/.git").toJava)
       .build()
     for {
-      changed <- ChangedPumlFiles.load(repository, fromHash, toHash)
+      changed <- ChangedPumlFiles.load(gitDirPath, repository, fromHash, toHash)
       comments = changed.toArray.map(Notification(_))
       _ <- publisher.publish(comments)
     } yield ()
@@ -28,14 +28,11 @@ class Reactor(publisher: NotificationPublisher) extends LazyLogging {
 
 object Reactor extends Reactor(ConsolePublisher) with App {
 //  import org.kohsuke.github.GitHubBuilder
-  val path: String = File(".").toJava.getAbsoluteFile.getParent
-  logger.info(s"current_dir ${path}")
-
-  val gitDir = Try(args(0)).getOrElse("./.git")
+  val gitDir = Try(args(0)).getOrElse(sys.env("GITHUB_WORKSPACE"))
   val from = Try(args(1)).getOrElse(sys.env("FROM"))
   val to = Try(args(2)).getOrElse(sys.env("TO"))
 
-  logger.info(s"from $from to $to")
+  logger.info(s"gitDir $gitDir from $from to $to")
 
   //  val github = GitHubBuilder.fromEnvironment.build
   perform(gitDir, from, to).recover {
