@@ -27,14 +27,17 @@ class Reactor(publisher: NotificationPublisher) extends LazyLogging {
 }
 
 object Reactor extends Reactor(ConsolePublisher) with App {
-
 //  import org.kohsuke.github.GitHubBuilder
+  val path: String = File(".").toJava.getAbsoluteFile.getParent
+  logger.info(s"current_dir ${path}")
 
   val gitDir = Try(args(0)).getOrElse("./.git")
   val from = Try(args(1)).getOrElse(sys.env("FROM"))
   val to = Try(args(2)).getOrElse(sys.env("TO"))
 
-//  val github = GitHubBuilder.fromEnvironment.build
+  logger.info(s"from $from to $to")
+
+  //  val github = GitHubBuilder.fromEnvironment.build
   perform(gitDir, from, to).recover {
     case t: Throwable =>
       logger.error(s"$t")
