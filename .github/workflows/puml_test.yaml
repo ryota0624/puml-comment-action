@@ -18,5 +18,5 @@ jobs:
           from: origin/${{ github.base_ref }}
           to: origin/${{ github.head_ref }}
           github-aouth: ${{ secrets.Token }}
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v1
+#      - name: Setup tmate session
+#        uses: mxschmitt/action-tmate@v1
