@@ -1,0 +1,18 @@
+name: action test
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: preview uml
+        uses: ./
+        with:
+          from: ${{ github.base_ref }}
+          to: ${{ github.head_ref }}
+          github-aouth: "xxx"

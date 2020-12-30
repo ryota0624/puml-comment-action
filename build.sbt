@@ -15,6 +15,11 @@ libraryDependencies ++= Seq(
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
 )
 
+organization := "ryota0624"
+dockerBaseImage := "openjdk:11-jdk"
+
+enablePlugins(JavaAppPackaging, DockerPlugin)
+
 assemblyMergeStrategy in assembly := {
   case "module-info.class" => MergeStrategy.discard
   case x =>
@@ -24,6 +29,7 @@ assemblyMergeStrategy in assembly := {
 
 // TODO: AOTコンパイルしたjarにする
 //  Github Actionで実際に試す
+// assemblyするmainオブジェクト指定
 
 // 環境変数 GITHUB_OAUTH
 // cli GITHUB_REPOSITORY github.base_ref github.head_ref

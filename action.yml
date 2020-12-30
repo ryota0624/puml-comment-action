@@ -1,0 +1,25 @@
+name: 'Puml GitHub Comment Preview Action'
+author: alejandrohdezma
+description: 'post puml preview for PR'
+branding:
+  icon:  arrow-up-circle
+  color: red
+
+inputs:
+  from:
+    description: 'git hash for from'
+    required: true
+  to:
+    description: 'git hash for to'
+    required: true
+  github-aouth:
+    description: 'github personal access token'
+    required: true
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  env:
+    FROM: ${{ inputs.from }}
+    TO: ${{ inputs.to }}
+    GITHUB_OAUTH: ${{ inputs.github-aouth }}
