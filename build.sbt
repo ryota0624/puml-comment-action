@@ -26,12 +26,3 @@ assemblyMergeStrategy in assembly := {
     val oldStrategy = (assemblyMergeStrategy in assembly).value
     oldStrategy(x)
 }
-
-// TODO: AOTコンパイルしたjarにする
-//  Github Actionで実際に試す
-// assemblyするmainオブジェクト指定
-
-// 環境変数 GITHUB_OAUTH
-// cli GITHUB_REPOSITORY github.base_ref github.head_ref
-
-//docker run --workdir /github/workspace --rm -e FROM=origin/main -e TO=origin/test/pr -v "/home/runner/work/puml-comment-action/puml-comment-action":"/github/workspace" cf44e53f3cc4 /github/workspace
