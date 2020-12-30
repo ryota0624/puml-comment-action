@@ -1,1 +1,1 @@
-FROM ryota0624/puml-comment-action:0.0.1
+FROM ryota0624/puml-comment-action:0.0.3
