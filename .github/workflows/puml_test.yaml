@@ -17,6 +17,6 @@ jobs:
         with:
           from: origin/${{ github.base_ref }}
           to: origin/${{ github.head_ref }}
-          github-aouth: ${{ secrets.Token }}
+          github-aouth: ${{ secrets.TOKEN }}
           pullrequest-number: ${{ github.event.number }}
           repository-name: ${{ github.repository }}
