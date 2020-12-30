@@ -30,8 +30,12 @@ object Reactor extends Reactor(ConsolePublisher) with App {
 
 //  import org.kohsuke.github.GitHubBuilder
 
+  val gitDir = Try(args(0)).getOrElse("./.git")
+  val from = Try(args(1)).getOrElse(sys.env("FROM"))
+  val to = Try(args(2)).getOrElse(sys.env("TO"))
+
 //  val github = GitHubBuilder.fromEnvironment.build
-  perform(args(0), args(1), args(2)).recover {
+  perform(gitDir, from, to).recover {
     case t: Throwable =>
       logger.error(s"$t")
       sys.error(t.getMessage)
