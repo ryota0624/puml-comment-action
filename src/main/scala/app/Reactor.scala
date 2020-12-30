@@ -6,38 +6,34 @@ import git.ChangedPumlFiles
 import notification.{ConsolePublisher, Notification, NotificationPublisher}
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 
+import scala.util.Try
+
 class Reactor(publisher: NotificationPublisher) extends LazyLogging {
 
-  def perform(gitDirPath: String, fromHash: String, toHash: String): Unit = {
-    logger.info("start")
-
+  def perform(
+      gitDirPath: String,
+      fromHash: String,
+      toHash: String
+  ): Try[Unit] = {
     val repository = new FileRepositoryBuilder()
       .setGitDir(File(gitDirPath).toJava)
       .build()
-    val publishT = for {
+    for {
       changed <- ChangedPumlFiles.load(repository, fromHash, toHash)
-      _ = {
-        logger.info("loaded")
-      }
       comments = changed.toArray.map(Notification(_))
-    } yield {
-      logger.info("before publish")
-      publisher.publish(comments)
-    }
-
-    publishT.recover {
-      case t: Throwable =>
-        sys.error(t.getMessage)
-    }
-    // 変更のあったファイルを抽出
-    // pumlファイルのみ抽出
-    // pumlファイルをURLに変換
-    // URLをgithubへコメント
-    //  同じファイルへのコメントがあれば上書き
+      _ <- publisher.publish(comments)
+    } yield ()
   }
 }
 
 object Reactor extends Reactor(ConsolePublisher) with App {
 
-  perform(args(0), args(1), args(2))
+  import org.kohsuke.github.GitHubBuilder
+
+  val github = GitHubBuilder.fromEnvironment.build
+  perform(args(0), args(1), args(2)).recover {
+    case t: Throwable =>
+      logger.error(s"$t")
+      sys.error(t.getMessage)
+  }
 }

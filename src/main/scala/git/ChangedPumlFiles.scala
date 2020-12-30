@@ -4,8 +4,9 @@ import com.typesafe.scalalogging.LazyLogging
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.diff.DiffEntry
 import org.eclipse.jgit.diff.DiffEntry.ChangeType
-import org.eclipse.jgit.lib.Repository
+import org.eclipse.jgit.lib.{ObjectId, Repository}
 import org.eclipse.jgit.revwalk.RevWalk
+import org.eclipse.jgit.treewalk.CanonicalTreeParser
 import uml.Puml
 
 import scala.jdk.CollectionConverters._
@@ -54,9 +55,6 @@ object ChangedPumlFiles extends LazyLogging {
       }
     } yield files
   }
-
-  import org.eclipse.jgit.lib.ObjectId
-  import org.eclipse.jgit.treewalk.CanonicalTreeParser
 
   private def prepareTreeParser(
       repository: Repository,

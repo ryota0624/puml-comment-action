@@ -14,3 +14,9 @@ libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
 )
+
+// TODO: AOTコンパイルしたjarにする
+//  Github Actionで実際に試す
+
+// 環境変数 GITHUB_OAUTH
+// cli GITHUB_REPOSITORY github.base_ref github.head_ref

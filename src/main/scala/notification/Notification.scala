@@ -3,6 +3,8 @@ package notification
 import git.ChangedPumlFile
 import uml.Puml
 
+import scala.util.{Success, Try}
+
 sealed trait Notification {
   def id(): String
   def text(): String
@@ -27,7 +29,7 @@ class PumlCreated(puml: Puml) extends Notification {
   override def id(): String = puml.id
 
   override def text(): String = {
-    s"uml created ${puml.id} ${Notification.imageUrl(puml.id, puml.previewUrl())}"
+    s"uml created ${Notification.imageUrl(puml.id, puml.previewUrl())}"
   }
 }
 
@@ -41,13 +43,14 @@ class PumlModified(from: Puml, to: Puml) extends Notification {
 }
 
 trait NotificationPublisher {
-  def publish(notifications: Seq[Notification])
+  def publish(notifications: Seq[Notification]): Try[Unit]
 }
 
 object ConsolePublisher extends NotificationPublisher {
-  override def publish(notifications: Seq[Notification]): Unit = {
+  override def publish(notifications: Seq[Notification]): Try[Unit] = {
     notifications.foreach { notification =>
       System.out.println(notification.text())
     }
+    Success()
   }
 }
