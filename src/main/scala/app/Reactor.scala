@@ -28,9 +28,9 @@ class Reactor(publisher: NotificationPublisher) extends LazyLogging {
 
 object Reactor extends Reactor(ConsolePublisher) with App {
 
-  import org.kohsuke.github.GitHubBuilder
+//  import org.kohsuke.github.GitHubBuilder
 
-  val github = GitHubBuilder.fromEnvironment.build
+//  val github = GitHubBuilder.fromEnvironment.build
   perform(args(0), args(1), args(2)).recover {
     case t: Throwable =>
       logger.error(s"$t")
