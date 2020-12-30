@@ -15,4 +15,4 @@ jobs:
         with:
           from: ${{ github.base_ref }}
           to: ${{ github.head_ref }}
-          github-aouth: "xxx"
+          github-aouth: ${{ secrets.Token }}
