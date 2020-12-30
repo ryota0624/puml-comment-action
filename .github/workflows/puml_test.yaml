@@ -16,3 +16,5 @@ jobs:
           from: ${{ github.base_ref }}
           to: ${{ github.head_ref }}
           github-aouth: ${{ secrets.Token }}
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v1
