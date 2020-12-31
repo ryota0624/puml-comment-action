@@ -4,7 +4,7 @@ import better.files.File
 import com.typesafe.scalalogging.LazyLogging
 import git.ChangedPumlFiles
 import github.{CommentPublisher, RepositoryIdentifier}
-import notification.{Notification, NotificationPublisher}
+import notification.{ConsolePublisher, Notification, NotificationPublisher}
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 
 import scala.util.Try
@@ -29,16 +29,17 @@ class Reactor(publisher: NotificationPublisher) extends LazyLogging {
 
 object Reactor extends App with LazyLogging {
   import org.kohsuke.github.GitHubBuilder
-
   val github = GitHubBuilder.fromEnvironment.build
 
-  val instance = new Reactor(
+  val publisher = if (sys.env.get("OUTPUT").contains("GITHUB_COMMENT")) {
     new CommentPublisher(
       new RepositoryIdentifier.Name(sys.env("REPOSITORY_NAME")),
       sys.env("PR_NUMBER").toInt,
       github
     )
-  )
+  } else ConsolePublisher
+
+  val instance = new Reactor(publisher)
   val gitDir = Try(args(0)).getOrElse(sys.env("GITHUB_WORKSPACE"))
   val from = Try(args(1)).getOrElse(sys.env("FROM"))
   val to = Try(args(2)).getOrElse(sys.env("TO"))

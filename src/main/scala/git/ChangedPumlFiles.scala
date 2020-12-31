@@ -43,12 +43,19 @@ object ChangedPumlFiles extends LazyLogging {
                 if Puml.isPumlFileName(diffEntry.getNewPath) =>
               diffEntry.getChangeType match {
                 case ChangeType.ADD =>
+                  git.checkout().setName(to).call()
                   ChangedPumlFile
                     .Added(Puml.load(gitDirPath + "/" + diffEntry.getNewPath))
                 case ChangeType.MODIFY =>
                   ChangedPumlFile.Modified(
-                    Puml.load(gitDirPath + "/" + diffEntry.getOldPath),
-                    Puml.load(gitDirPath + "/" + diffEntry.getNewPath)
+                    {
+                      git.checkout().setName(from).call()
+                      Puml.load(gitDirPath + "/" + diffEntry.getOldPath)
+                    }, {
+                      git.checkout().setName(to).call()
+                      Puml.load(gitDirPath + "/" + diffEntry.getNewPath)
+
+                    }
                   )
               }
           }
