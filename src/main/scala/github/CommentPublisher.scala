@@ -11,7 +11,7 @@ case class Comment(text: String) {
 
 object Comment {
   def fromNotifications(notifications: Seq[Notification]): Comment = {
-    Comment(notifications.map(_.text()).mkString("\n--------\n"))
+    Comment(notifications.map(_.text()).mkString("\n\n--------\n\n"))
   }
 }
 
