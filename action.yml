@@ -30,3 +30,4 @@ runs:
     GITHUB_OAUTH: ${{ inputs.github-aouth }}
     PR_NUMBER: ${{ inputs.pullrequest-number }}
     REPOSITORY_NAME: ${{ inputs.repository-name }}
+    OUTPUT: 'GITHUB_COMMENT'
