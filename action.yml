@@ -15,7 +15,12 @@ inputs:
   github-aouth:
     description: 'github personal access token'
     required: true
-
+  pullrequest-number:
+    description: 'pull request number'
+    required: true
+  repository-name:
+    description: 'repository name'
+    required: true
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -23,3 +28,6 @@ runs:
     FROM: ${{ inputs.from }}
     TO: ${{ inputs.to }}
     GITHUB_OAUTH: ${{ inputs.github-aouth }}
+    PR_NUMBER: ${{ inputs.pullrequest-number }}
+    REPOSITORY_NAME: ${{ inputs.repository-name }}
+    OUTPUT: 'GITHUB_COMMENT'

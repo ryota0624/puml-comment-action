@@ -26,10 +26,3 @@ assemblyMergeStrategy in assembly := {
     val oldStrategy = (assemblyMergeStrategy in assembly).value
     oldStrategy(x)
 }
-
-// TODO: AOTコンパイルしたjarにする
-//  Github Actionで実際に試す
-// assemblyするmainオブジェクト指定
-
-// 環境変数 GITHUB_OAUTH
-// cli GITHUB_REPOSITORY github.base_ref github.head_ref

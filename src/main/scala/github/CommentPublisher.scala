@@ -11,7 +11,7 @@ case class Comment(text: String) {
 
 object Comment {
   def fromNotifications(notifications: Seq[Notification]): Comment = {
-    Comment(notifications.map(_.text()).mkString("\n--------\n"))
+    Comment(notifications.map(_.text()).mkString("\n\n--------\n\n"))
   }
 }
 
@@ -55,7 +55,7 @@ class CommentPublisher(
         case Some(publishedComment) =>
           publishedComment.update(comment.text)
         case None =>
-          pr.comment(comment.text)
+          pr.comment(comment.addPrefix(publishedPrefix).text)
       })
     } yield ()
 
@@ -66,6 +66,6 @@ class CommentPublisher(
 
   def publishedComment(text: String): Boolean = text.contains(publishedPrefix)
 
-  private val publishedPrefix: String = "published by TODO" // TODO
+  private val publishedPrefix: String = "published by GitHub Action" // TODO
 
 }
